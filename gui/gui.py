@@ -1,8 +1,7 @@
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from backend.hash_router import route_hash
-#from Crypto.Hash import MD2, MD4, MD5, SHA1
-
+from backend.md4_handler import forge_md4
 import os
 
 ctk.set_appearance_mode("dark")
