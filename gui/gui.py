@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
-from Crypto.Hash import MD2, MD4, MD5, SHA1
+from backend.hash_router import route_hash
 import os
 
 ctk.set_appearance_mode("dark")
@@ -35,32 +35,24 @@ def forge():
     hash_name = hash_dropdown.get()
     content = inject_textbox.get("1.0", "end").encode()
 
-    hash_module = get_hash_function(hash_name)
-    if not hash_module:
-        messagebox.showerror("Error", "Invalid hash type.")
-        return
-
     try:
         with open(selected_file, "rb") as f:
             original_data = f.read()
 
-        original_hash = hash_module.new(original_data).hexdigest()
-
-        # Simulate forged file (just appending)
+        original_hash = route_hash(hash_name, original_data)
         forged_data = original_data + content
-        forged_hash = hash_module.new(forged_data).hexdigest()
+        forged_hash = route_hash(hash_name, forged_data)
 
         original_hash_var.set(original_hash)
         forged_hash_var.set(forged_hash)
 
-        # Save forged data to memory
         app.forged_data = forged_data
-
         match = "✅ Match" if original_hash == forged_hash else "❌ Not Matching"
         match_label.configure(text=match, text_color="green" if match.startswith("✅") else "red")
 
     except Exception as e:
         messagebox.showerror("Error", str(e))
+
 
 def download_forged():
     if not hasattr(app, "forged_data"):
